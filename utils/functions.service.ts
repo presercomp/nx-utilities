@@ -7,7 +7,7 @@ import * as moment from 'moment';
 @Injectable({
   providedIn: 'root'
 })
-export class FuncionesService {
+export class FunctionsService {
 
   constructor() { }
 
