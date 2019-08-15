@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FuncionesService } from './funciones.service';
+import { FunctionsService } from './functions.service';
 
-describe('FuncionesService', () => {
+describe('FunctionsService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: FuncionesService = TestBed.get(FuncionesService);
+    const service: FunctionsService = TestBed.get(FunctionsService);
     expect(service).toBeTruthy();
   });
 });
