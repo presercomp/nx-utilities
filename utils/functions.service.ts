@@ -271,5 +271,11 @@ export class FunctionsService {
     const credencial = this.desencriptar(sessionStorage.getItem('credencial'));
     return credencial;
   }
+  
+  public log(output: any) {
+    if (!environment.production) {
+      console.log(output);
+    }
+  }
 
 }
