@@ -5,5 +5,5 @@
 ### Contenido
 
 - Servicio data (DataService)
-- Servicio funciones (FuncionesService)
+- Servicio functions (FunctionsService)
 - Interfaces
