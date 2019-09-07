@@ -7,3 +7,4 @@
 - Servicio data (DataService)
 - Servicio functions (FunctionsService)
 - Interfaces
+- Archivo inicial app.module.ts
