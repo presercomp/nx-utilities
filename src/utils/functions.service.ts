@@ -169,23 +169,91 @@ export class FunctionsService {
     });
   }
 
+  public uniqueBy(obj: any[], filter: string[]): any[] {
+    const temp = [];
+    obj.forEach(t => {
+      filter.forEach(f => {
+        if (temp.filter(x => x[f] === t[f]).length === 0) {
+          temp.push(t);
+        }
+      });
+    });
+    return temp;
+  }
+
 
   public arrayObjCompare(objA: any, objB: any) {
     return JSON.stringify(objA) === JSON.stringify(objB);
   }
 
+  /**
+   * Excluye los elementos del objeto B en el objeto A según el campo
+   *
+   * @param {*} objA
+   * @param {*} objB
+   * @param {*} field
+   * @memberof FunctionsService
+   */
+  public arrayExclude(objA: any, objB: any, field: string) {
+    objB.forEach(x => {
+      objA = objA.filter(z => z[field] !== x[field]);
+    });
+    return objA;
+  }
+
   public tiempoDiferencia(inicio: string, termino: string) {
+    let tiempo = '00:00';
+    if (inicio !== undefined && termino !== undefined) {
+      if (inicio.indexOf(':') >= 0 && termino.indexOf(':') >= 0) {
+        const ini = inicio.split(':');
+        const fin = termino.split(':');
+        const ini_h = parseInt(ini[0], 10);
+        const ini_m = parseInt(ini[1], 10);
+        const fin_h = parseInt(fin[0], 10);
+        const fin_m = parseInt(fin[1], 10);
+        const ini_x = moment().set({'hour': ini_h, 'minute': ini_m, 'seconds': 0, 'milliseconds': 0});
+        const fin_x = moment().set({'hour': fin_h, 'minute': fin_m, 'seconds': 0, 'milliseconds': 0});
+        const ms = moment.duration(fin_x.diff(ini_x)).as('ms');
+        tiempo = moment().set({'hour': 0, 'minute': 0, 'seconds': 0, 'milliseconds': ms}).format('HH:mm');
+      }
+    }
+    return tiempo;
+  }
+
+  /**
+   * Compara 2 horas
+   * @param string inicio  Primera hora a comparar
+   * @param string termino Segunda hora a comparar
+   *
+   * @returns int (1) el 1er. es mayor que el 2do; (-1) el 1er. es menor que el 2do; (0) son iguales
+   */
+  public tiempoComparar(inicio: string, termino: string) {
+    if (inicio === null || termino === null) {
+      return 0;
+    }
+    if (inicio.indexOf(':') === -1 || termino.indexOf(':') === -1) {
+      return 0;
+    }
     const ini = inicio.split(':');
     const fin = termino.split(':');
     const ini_h = parseInt(ini[0], 10);
     const ini_m = parseInt(ini[1], 10);
     const fin_h = parseInt(fin[0], 10);
     const fin_m = parseInt(fin[1], 10);
-    const ini_x = moment().set({'hour': ini_h, 'minute': ini_m, 'seconds': 0, 'milliseconds': 0});
-    const fin_x = moment().set({'hour': fin_h, 'minute': fin_m, 'seconds': 0, 'milliseconds': 0});
-    const ms = moment.duration(fin_x.diff(ini_x)).as('ms');
-    const tiempo = moment().set({'hour': 0, 'minute': 0, 'seconds': 0, 'milliseconds': ms}).format('HH:mm');
-    return tiempo;
+    if (ini_h > fin_h) {
+      return 1;
+    } else if (ini_h < fin_h) {
+      return -1;
+    } else {
+      if (ini_m > fin_m) {
+        return 1;
+      } else if (ini_m < fin_m) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }
+
   }
 
   public tiempoSumar(primero: string, segundo: string) {
@@ -196,20 +264,22 @@ export class FunctionsService {
     return this._tiempoOperar(primero, segundo, 'restar');
   }
 
-  public tiempoAcomular(primero: string, segundo: string) {
+  public tiempoAcumular(primero: string, segundo: string) {
     const h = parseInt(primero.split(':')[0], 10);
     const m = parseInt(primero.split(':')[1], 10);
+
     const a = parseInt(segundo.split(':')[0], 10);
     const b = parseInt(segundo.split(':')[1], 10);
 
     let minutos = m + b;
     let horas = h + a;
-    if (minutos > 60) {
-      const hrs = Math.round(minutos / 60);
+    if (minutos >= 60) {
+      const hrs = Math.trunc(minutos / 60);
+      const min_res = minutos - (hrs * 60);
       horas += hrs;
-      minutos -= hrs * 60;
+      minutos = min_res;
     }
-    return horas + ':' + this.padLeft(minutos, 1);
+    return this.padLeft(horas, 2) + ':' + this.padLeft(minutos, 2);
   }
 
   private _tiempoOperar(primero: string, segundo: string, accion: string) {
@@ -271,11 +341,16 @@ export class FunctionsService {
     const credencial = this.desencriptar(sessionStorage.getItem('credencial'));
     return credencial;
   }
-  
+
   public log(output: any) {
     if (!environment.production) {
       console.log(output);
     }
   }
 
+  public now() {
+    return moment().format('YYYY-MM-DD HH:mm:ss');
+  }
+
 }
+
