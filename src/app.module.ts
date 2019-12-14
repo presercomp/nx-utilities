@@ -5,7 +5,7 @@ import { AuthGuard } from './auth.guard';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LogModule } from './site/public/log/log.module';
-import { DashboardModule } from './site/private/dashboard/dashboard.module';
+import { ModulesModule } from './site/private/modules/modules.module';
 import { ApiService } from './utils/api.service';
 import { DataService } from './utils/data.service';
 import { FunctionsService } from './utils/functions.service';
@@ -28,7 +28,7 @@ declare var $: any;
   imports: [
     AppRoutingModule,
     BrowserModule,
-    DashboardModule,
+    ModulesModule,
     HttpClientModule,
     LogModule,
     NgxXLSXModule,
@@ -49,7 +49,7 @@ declare var $: any;
   providers: [
     ApiService,
     DataService,
-    FuncionesService,
+    FunctionsService,
     AuthGuard,
     NgbModal
   ],
