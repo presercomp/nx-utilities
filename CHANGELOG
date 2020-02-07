@@ -3,6 +3,11 @@ Todos los cambios notables de este proyecto estarán documentados en este archiv
 
 El formato es basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0) y este proyecto se adhiere a [Versionamiento Semantico](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.3] 2020-02-06 23:26
+## Changed
+- Cambios en la estructura del directorio
+- Añade nuevas directivas para controles tipo "input"
+
 ## [0.0.2] 2019-06-23 23:25
 ## Changed
 - Cambios en la estructura del directorio

@@ -11,6 +11,10 @@ export class FunctionsService {
 
   constructor() { }
 
+  /**
+   * Genera el Digito verificador de un RUN
+   * @param run Número de RUN
+   */
   public getDV(run: number) {
       let factor = 2;
       let suma = 0;
@@ -26,17 +30,30 @@ export class FunctionsService {
       return dv;
   }
 
+  /**
+   * Comprueba si un RUT y su Dígito verificador son válidos
+   * @param run Número de RUN
+   * @param dv  Digito Verificador
+   */
   public validaRUN(run: number, dv: string) {
     const digito = this.getDV(run).toString();
     return String(digito).toUpperCase() === String(dv).toUpperCase();
   }
 
+  /**
+   * Valida que la dirección de correo es semánticamente correcto
+   * @param mail Dirección de Correo a evaluar
+   */
   public validaMail(mail: string): boolean {
     // tslint:disable-next-line:max-line-length
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(mail);
   }
 
+  /**
+   * Genera una encriptación en formato AES
+   * @param data 
+   */
   public encriptar(data: any) {
     try {
       const jss = JSON.stringify(data);
@@ -46,6 +63,10 @@ export class FunctionsService {
     }
   }
 
+  /**
+   * Desencripta un elemento cifrado en AES
+   * @param data 
+   */
   public desencriptar(data: any) {
     try {
       const bytes = CryptoJS.AES.decrypt(data, environment.encryptSecretKey);
@@ -58,26 +79,9 @@ export class FunctionsService {
     }
   }
 
-  public cargando(mostrar: boolean, mensaje?: string) {
-    const cortina = document.getElementsByClassName('page-loader-wrapper').item(0) as HTMLElement;
-    const mensajero = document.getElementById('msjeCargaApp') as HTMLElement;
-    cortina.style.display = mostrar ? 'block' : 'none';
-    if (mensaje !== undefined) {
-      mensajero.innerHTML = mensaje;
-    }
-  }
-
-  public precarga() {
-    const cortina = document.getElementsByClassName('page-loader-wrapper').item(0) as HTMLElement;
-    const mensajero = document.getElementById('msjeCargaApp') as HTMLElement;
-    cortina.style.display = 'block';
-    mensajero.innerHTML = 'Procesando datos...';
-  }
-
-  public padLeft(value: any, zeros: number) {
-    return (value.toString().length < zeros) ? this.padLeft('0' + value, zeros) : value;
-  }
-
+  /**
+   * Ordena un objeto
+   */
   public by = function (attr, menor) {
     return function (o, p) {
         let a, b;
@@ -101,6 +105,9 @@ export class FunctionsService {
     };
   };
 
+  /**
+   * Agrupa elementos de un arreglo
+   */
   public groupBy = function(xs, key) {
     return xs.reduce(function(rv, x) {
       (rv[x[key]] = rv[x[key]] || []).push(x);
@@ -108,6 +115,10 @@ export class FunctionsService {
     }, {});
   };
 
+  /**
+   * Clona un objeto o arreglo
+   * @param obj elemento a clonar
+   */
   public clone(obj: any) {
     if (null == obj || 'object' !== typeof obj) {
       return obj;
@@ -121,6 +132,10 @@ export class FunctionsService {
     return copy;
   }
 
+  /**
+   * Clona un objeto o arreglo de forma profunda.
+   * @param obj 
+   */
   public deepClone(obj: any) {
     let copy: any;
     if (null == obj || 'object' !== typeof obj) {
@@ -156,9 +171,21 @@ export class FunctionsService {
     throw new Error('Imposible copiar objeto. El tipo no está soportado');
   }
 
+  /**
+   * Ordena un arreglo u objeto, por un elemento en forma ascendente o descendente
+   * @param obj   Elemento a ordenar
+   * @param field Campo mandador para el orden
+   * @param asc   Si se define true, ordena ascendente, de lo contrario, descendente
+   */
   public order(obj: any, field: string, asc: boolean) {
     const typeOrder = asc ? [-1, 1] : [1, -1];
     return obj.sort((a, b) => {
+      if ( a[field] === null) {
+        return typeOrder[0];
+      }
+      if ( b[field] === null) {
+        return typeOrder[1];
+      }
       if ( a[field] < b[field] ) {
         return typeOrder[0];
       }
@@ -181,7 +208,11 @@ export class FunctionsService {
     return temp;
   }
 
-
+  /**
+   * Compara dos objetos y valida que sea idénticos en estructura y datos
+   * @param objA Primer Objeto a comparar
+   * @param objB Segundo Objeto a comparar
+   */
   public arrayObjCompare(objA: any, objB: any) {
     return JSON.stringify(objA) === JSON.stringify(objB);
   }
@@ -201,6 +232,11 @@ export class FunctionsService {
     return objA;
   }
 
+  /**
+   * Obtiene la diferencia de tiempo entre dos Horas en formato MomentJS
+   * @param inicio 
+   * @param termino 
+   */
   public tiempoDiferencia(inicio: string, termino: string) {
     let tiempo = '00:00';
     if (inicio !== undefined && termino !== undefined) {
@@ -279,7 +315,7 @@ export class FunctionsService {
       horas += hrs;
       minutos = min_res;
     }
-    return this.padLeft(horas, 2) + ':' + this.padLeft(minutos, 2);
+    return horas.padZero(2) + ':' + minutos.padZero(2);
   }
 
   private _tiempoOperar(primero: string, segundo: string, accion: string) {
@@ -348,9 +384,62 @@ export class FunctionsService {
     }
   }
 
+  /**
+   * Retorna la fecha y hora actual de tipo MomentJS en formato YYY-MM-DD HH:mm:ss
+   */
   public now() {
     return moment().format('YYYY-MM-DD HH:mm:ss');
   }
 
+  public dtLoader(show:boolean){
+    if(show) {
+      let loader = <HTMLDivElement>(document.createElement('div'));
+      const parent = document.getElementsByClassName('card-group') as HTMLCollectionOf<HTMLElement>;
+      const card = parent[0];
+      const parentHeight = card.offsetHeight;
+      loader.id = "dtLoader";
+      loader.classList.add('dtLoader');
+      loader.style.height = parentHeight.toString();      
+      let animation_a = <HTMLSpanElement>(document.createElement('span'));
+      let animation_b = <HTMLSpanElement>(document.createElement('span'));
+      let animation_c = <HTMLSpanElement>(document.createElement('span'));
+      loader.appendChild(animation_a);
+      loader.appendChild(animation_b);
+      loader.appendChild(animation_c);
+      card.parentNode.insertBefore(loader, card);
+    } else {
+      document.getElementById("dtLoader").remove();
+    }
+  }
+
+  /**
+   * Genera un valor único - Similr uniqueid() de PHP
+   */
+  public uniqueid() {
+    const n = Math.floor(Math.random() * 11);
+    const k = Math.floor(Math.random() * 1000000);
+    return String.fromCharCode(n) + k;
+  }
+
+  public getBase64Image(url) {
+    var promise = new Promise(function(resolve, reject) {
+  
+      var img = new Image();
+      // To prevent: "Uncaught SecurityError: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported."
+      img.crossOrigin = "Anonymous"; 
+      img.onload = function() {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      };  
+      img.src = url;      
+    });
+  
+    return promise;
+  };
 }
 

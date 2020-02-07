@@ -4,6 +4,8 @@ export enum order {
 }
 export enum Option {
     equal = '=',
+    notEqual = '!=',
+    distinct = '!=',
     mayor = '>',
     minor = '<',
     mayorOrEqual = '>=',
@@ -38,4 +40,6 @@ export interface Order {
 export interface Orders {
     order: Order[];
 }
+
+
 
